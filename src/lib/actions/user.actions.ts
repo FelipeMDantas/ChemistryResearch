@@ -19,6 +19,8 @@ export async function createUser(user: CreateUserParams) {
       throw new Error("User already exists with this email");
     }
 
+    console.log('past 22')
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(user.password, salt);
 
@@ -27,6 +29,7 @@ export async function createUser(user: CreateUserParams) {
       password: hashedPassword,
       userBio: user.userBio || "",
     });
+    console.log('past 32')
 
     const verificationUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/verify-email?token=${newUser._id}`;
     await sendVerificationEmail(
