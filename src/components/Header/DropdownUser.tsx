@@ -4,12 +4,23 @@ import { useState } from "react";
 import { ChevronDown, LogOut, Settings, User2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useUser } from "@/app/context/UserContext";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const DropdownUser = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const user = useUser();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/auth-page/signin");
+  };
+
   return (
-    <div onClick={() => setDropdownOpen(false)} className="relative">
+    <div onClick={() => setDropdownOpen(!dropdownOpen)} className="relative">
       <Link
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center gap-4"
@@ -17,7 +28,7 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            John Doe
+            {user.firstName} {user.lastName}
           </span>
           <span className="block text-xs">Researcher</span>
         </span>
@@ -26,8 +37,8 @@ const DropdownUser = () => {
           <Image
             width={80}
             height={80}
-            src="/images/user/user-01.png"
-            className="rounded-full"
+            src={user.photo}
+            className="rounded-full max-h-12 min-w-12 object-cover"
             style={{
               width: "auto",
               height: "auto",
@@ -69,6 +80,7 @@ const DropdownUser = () => {
           <button
             className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out 
           hover:text-primary lg:text-base"
+            onClick={handleLogout}
           >
             <LogOut />
             Log Out
